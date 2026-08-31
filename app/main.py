@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from .tools import calculate, get_current_datetime, convert_units, convert_currency
 
 load_dotenv()
 
@@ -16,13 +17,22 @@ app = FastAPI(title="Aiva AI Assistant", version="2.0.0")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 SYSTEM_PROMPT = os.getenv(
     "ASSISTANT_SYSTEM_PROMPT",
-    "You are Aiva, a helpful AI personal assistant. Be concise, practical, friendly, and honest. "
-    "When a request needs current information that you cannot verify, say so rather than inventing details. "
-    "Use plain language and format responses for a web chat interface.",
+    "You are Aiva, a helpful AI personal assistant. "
+    "Be concise, practical, friendly, and honest. "
+    "Use the available tools whenever they are appropriate. "
+    "Use the calculator for mathematical calculations. "
+    "Use the date/time tool whenever the user asks for the current date or time. "
+    "Use the unit converter for supported unit conversions. "
+    "Use the currency converter whenever the user asks to convert one currency into another. "
+    "Use currency codes such as USD, INR, EUR, GBP, and JPY when calling the currency converter. "
+    "Tell the user the rate date because exchange rates are updated periodically, not continuously. "
+    "Never invent a tool result. "
+    "After using a tool, explain the result clearly to the user."
 )
+
 
 client = None
 if GEMINI_API_KEY:
@@ -77,10 +87,18 @@ def chat(request: ChatRequest):
         from google.genai import types
 
         response = client.models.generate_content(
-            model=MODEL,
-            contents=_build_contents(request.messages),
-            config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT),
-        )
+    model=MODEL,
+    contents=_build_contents(request.messages),
+    config=types.GenerateContentConfig(
+        system_instruction=SYSTEM_PROMPT,
+        tools=[
+            calculate,
+            get_current_datetime,
+            convert_units,
+            convert_currency,
+        ],
+    ),
+)
         text = (response.text or "").strip()
         if not text:
             raise HTTPException(status_code=502, detail="The AI returned an empty response.")
