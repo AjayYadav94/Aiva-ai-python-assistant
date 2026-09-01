@@ -3,9 +3,13 @@ import ast
 import operator
 import json
 import requests
+import os
 from decimal import Decimal, InvalidOperation
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
+from dotenv import load_dotenv
+  
+load_dotenv()
 
 # -----------------------------
 # 1. Safe Calculator
@@ -196,3 +200,48 @@ def convert_currency(
     except Exception as exc:
         print(f"Currency conversion failed: {type(exc).__name__}: {exc}")
         return "The currency conversion could not be completed."
+def web_search(query: str) -> str:
+    """Search the web using Tavily and return useful results."""
+    try:
+        from tavily import TavilyClient
+
+        api_key = os.getenv("TAVILY_API_KEY")
+
+        if not api_key:
+            return "Web search is not configured."
+
+        if not query or not query.strip():
+            return "Please provide a search query."
+
+        client = TavilyClient(api_key=api_key)
+
+        response = client.search(
+            query=query.strip(),
+            search_depth="basic",
+            max_results=5,
+            include_answer=False,
+        )
+
+        results = response.get("results", [])
+
+        if not results:
+            return "No useful web results were found."
+
+        formatted = []
+
+        for index, result in enumerate(results, start=1):
+            title = result.get("title", "Untitled")
+            url = result.get("url", "")
+            content = result.get("content", "")
+
+            formatted.append(
+                f"{index}. {title}\n"
+                f"URL: {url}\n"
+                f"Snippet: {content[:700]}"
+            )
+
+        return "\n\n".join(formatted)
+
+    except Exception as exc:
+        print(f"Web search failed: {type(exc).__name__}: {exc}")
+        return "Web search could not be completed."

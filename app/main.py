@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from .tools import calculate, get_current_datetime, convert_units, convert_currency
+from .tools import (calculate, get_current_datetime, convert_units, convert_currency, web_search,)
 
 load_dotenv()
 
@@ -31,6 +31,15 @@ SYSTEM_PROMPT = os.getenv(
     "Tell the user the rate date because exchange rates are updated periodically, not continuously. "
     "Never invent a tool result. "
     "After using a tool, explain the result clearly to the user."
+    "Use Google Search when the user asks for current, recent, changing, or time-sensitive information. "
+    "When using web search, base your answer on the retrieved information and do not invent facts. "
+    "Prefer recent and authoritative sources when possible. "
+    "Use web_search whenever the user asks for current, recent, breaking, "
+    "time-sensitive, or externally verifiable information. "
+    "Do not use web_search for questions that can be answered reliably "
+    "without current web information. "
+    "When web_search is used, include the most relevant source URLs in the answer. "
+    "Never invent search results or sources."
 )
 
 
@@ -96,6 +105,7 @@ def chat(request: ChatRequest):
             get_current_datetime,
             convert_units,
             convert_currency,
+            web_search,
         ],
     ),
 )
