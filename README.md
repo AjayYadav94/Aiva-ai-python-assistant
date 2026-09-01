@@ -305,9 +305,12 @@ Example request shape:
 ## 📸 Screenshots
 
 ```md
-![Aiva Chat Interface](docs/screenshots/chat.png)
-![Web Search](docs/screenshots/search.png)
-![Voice Controls](docs/screenshots/voice.png)
+![Aiva Chat Interface]<img width="1278" height="827" alt="Screenshot 2026-09-01 125846" src="https://github.com/user-attachments/assets/fb1dca37-17bb-49e7-be9e-1227219e4010" />
+
+![Web Search]<img width="1261" height="820" alt="Screenshot 2026-09-01 130500" src="https://github.com/user-attachments/assets/05c760ea-216b-49c8-92ef-f2811fcf15e5" />
+
+![Voice Controls]<img width="1270" height="809" alt="Screenshot 2026-09-01 130509" src="https://github.com/user-attachments/assets/fe03d6be-1706-4558-aa43-59cea1184abc" />
+
 ```
 
 ## 🎯 Why I Built This
