@@ -39,6 +39,10 @@ SYSTEM_PROMPT = os.getenv(
     "Do not use web_search for questions that can be answered reliably "
     "without current web information. "
     "When web_search is used, include the most relevant source URLs in the answer. "
+    "At the end of a web-search answer, include a Sources section. "
+    "In the Sources section, include the title and exact SOURCE_URL "
+    "for each important source used. "
+    "Never invent a source or URL. "
     "Never invent search results or sources."
 )
 

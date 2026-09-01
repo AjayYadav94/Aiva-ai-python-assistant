@@ -236,7 +236,7 @@ def web_search(query: str) -> str:
 
             formatted.append(
                 f"{index}. {title}\n"
-                f"URL: {url}\n"
+                f"SOURCE_URL: {url}\n"
                 f"Snippet: {content[:700]}"
             )
 

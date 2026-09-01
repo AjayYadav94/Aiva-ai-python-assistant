@@ -29,6 +29,14 @@
     .recording { outline:3px solid rgba(220,53,69,.18); background:#ffe9ec; color:#a51d2d; }
     .hint { text-align:center; color:#8992a3; font-size:11px; padding:0 10px 10px; }
     @media (max-width: 650px) { .shell { height: 94vh; border-radius: 16px; } .msg { max-width:90%; } form { grid-template-columns:auto 1fr auto; } }
+    .msg.assistant a {
+    color: #315A9B;
+    text-decoration: underline;
+}
+
+.msg.assistant a:hover {
+    opacity: 0.75;
+}
   </style>
 </head>
 <body>
@@ -65,11 +73,35 @@ const statusEl = document.getElementById('status');
 const history = [];
 
 function addMessage(role, content) {
-  const el = document.createElement('div');
-  el.className = `msg ${role}`;
-  el.textContent = content;
-  chat.appendChild(el);
-  chat.scrollTop = chat.scrollHeight;
+    const el = document.createElement('div');
+    el.className = `msg ${role}`;
+
+    if (role === 'assistant') {
+        const urlRegex = /(https?:\/\/[^\s<]+)/g;
+
+        const parts = content.split(urlRegex);
+
+        parts.forEach((part) => {
+            if (urlRegex.test(part)) {
+                const link = document.createElement('a');
+                link.href = part.replace(/[.,)\]]+$/, '');
+                link.textContent = part.replace(/[.,)\]]+$/, '');
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.style.color = '#315A9B';
+                link.style.textDecoration = 'underline';
+
+                el.appendChild(link);
+            } else {
+                el.appendChild(document.createTextNode(part));
+            }
+        });
+    } else {
+        el.textContent = content;
+    }
+
+    chat.appendChild(el);
+    chat.scrollTop = chat.scrollHeight;
 }
 
 async function checkHealth() {
