@@ -305,7 +305,7 @@ Example request shape:
 ## 📸 Screenshots
 
 ### Aiva Homepage
-![Aiva Homepage](Screenshot%20homepage.png)
+![Aiva Homepage](homepage.png)
 
 ### Web Search
 ![Aiva Web Search](Screenshot%20web%20search.png)
